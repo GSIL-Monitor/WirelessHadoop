@@ -7,6 +7,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -92,14 +95,44 @@ public class guid_statis_request implements WritableComparable<guid_statis_reque
 			Matcher realMatcher = realP.matcher(line);
 			if (realMatcher.matches()) {
 				ip = realMatcher.group(1);
+				if(ip == null){
+					ip = "";
+				}
 				date = realMatcher.group(2);
+				if(date==null){
+					date = "";
+					longtime = 0;
+				}else{
+					longtime = getLongTime(date);
+				}
 				method = realMatcher.group(3);
+				if(method==null){
+					method = "";
+				}
 				uri = realMatcher.group(4);
+				if(uri==null){
+					uri = "";
+				}
 				request_args = realMatcher.group(5);
+				if(request_args==null){
+					request_args = "";
+				}
 				request_body = realMatcher.group(6);
+				if(request_body==null){
+					request_body = "";
+				}
 				response_code = realMatcher.group(7);
+				if(response_code==null){
+					response_code = "";
+				}
 				content_length = realMatcher.group(8);
+				if(content_length==null){
+					content_length = "";
+				}
 				request_time = realMatcher.group(9);
+				if(request_time==null){
+					request_time = "";
+				}
 				
 				request_args = request_args+"&"+request_body;
 				String[] args = request_args.split("&");
@@ -237,7 +270,6 @@ public class guid_statis_request implements WritableComparable<guid_statis_reque
 				if(guid == null){
 					guid = "null";
 				}
-				
 				if(guid2 == null){
 					guid2 = "null";
 				}
@@ -246,6 +278,20 @@ public class guid_statis_request implements WritableComparable<guid_statis_reque
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private long getLongTime(String date) {
+		if (date != null) {
+			String t = date.split("\\+")[0];
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+			try {
+				Date d = dateFormat.parse(t);
+				return d.getTime() / 1000;
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		return 0;
 	}
 	
 	private String getGuid(String mac, String imei, String deviceid, String uuid) {
@@ -605,4 +651,16 @@ public class guid_statis_request implements WritableComparable<guid_statis_reque
 		this.guid2 = guid2;
 	}
 
+	public String timeCompare(String time1){
+		
+		try {
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+			Date d = dateFormat.parse(time1);
+			SimpleDateFormat dateFormat1 = new SimpleDateFormat("yyyyMMdd");
+			return dateFormat1.format(d);
+			
+		} catch (ParseException e) {
+			return "";
+		}
+	}
 }
