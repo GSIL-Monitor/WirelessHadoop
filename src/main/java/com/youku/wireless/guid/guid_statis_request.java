@@ -14,12 +14,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.hadoop.io.WritableComparable;
+import com.youku.wireless.utils.LogStrUtils;
 
 public class guid_statis_request implements WritableComparable<guid_statis_request> {
-	private static final String realLogEntryPattern = "^([\\d.]+) \"(\\d{4}\\-\\d{2}\\-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\+\\d{2}:\\d{2})\" (\\S+) \"(\\S+)\" \"(.+)\" \"(\\S*)\" ([\\d]+) ([\\d]+) ([\\d]+\\.[\\d]+) \"(.*)\"";
-	// http
+	private static final String realLogEntryPattern = "^([\\d.]+) \"(\\d{4}\\-\\d{2}\\-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\+\\d{2}:\\d{2})\" (\\S+) \"(\\S+)\" \"(.+)\" \"(\\S*)\" ([\\d]+) ([\\d]+) ([\\d]+\\.[\\d]+) \"(.*)\".*";
+
 	private String ip;
 	private String date;
 	private String method;
@@ -31,8 +31,6 @@ public class guid_statis_request implements WritableComparable<guid_statis_reque
 	private String request_args;
 	private String request_body;
 
-
-	// args
 	private String pid;
 	private String ver;
 	private String operator;
@@ -48,14 +46,12 @@ public class guid_statis_request implements WritableComparable<guid_statis_reque
 	private String mobile;
 	private String mac;
 	private String uuid;
-	//private String time;
 	private String guid;
 	private String guid2;
 	private String deviceid;
 	private String ndeviceid;
 	private long longtime;
 
-	// labels
 	private static final String pid_label = "pid";
 	private static final String ver1_label = "ver";
 	private static final String ver2_label = "version";
@@ -69,12 +65,11 @@ public class guid_statis_request implements WritableComparable<guid_statis_reque
 	private static final String ht_label = "ht";
 	private static final String imei_label = "imei";
 	private static final String imsi_label = "imsi";
-	//private static final String mobile_label = "mobile";
 	private static final String mac_label = "mac";
 	private static final String uuid_label = "uuid";
-	//private static final String time_label = "time";
 	private static final String deviceid_label = "deviceid";
 	private static final String ndeviceid_label = "ndeviceid";
+	private static final String guid_label = "guid";
 	
 	private static MessageDigest MD5_DIGEST = null;
 
@@ -143,13 +138,32 @@ public class guid_statis_request implements WritableComparable<guid_statis_reque
 					}
 					String[] key_value = arg.split("=");
 					String key = key_value[0];
-					String value = key_value.length == 2 ? key_value[1] : "";
+					String value = "";
+					
+					if(arg.endsWith("=")){
+						int offset = arg.indexOf("=");
+						value = arg.substring(offset+1);
+					}else {
+						if(key_value.length == 2){
+							value = key_value[1];
+						}else if(key_value.length > 2){
+							int offset = arg.indexOf("=");
+							value = arg.substring(offset+1);
+						}
+					}
+					
 					map.put(key, value);
 				}
 				pid = (String) map.get(pid_label);
 				if (pid == null) {
+					pid = "";
+				}else{
+					pid = pid.trim();
+				}
+				if(!pid.matches("[0-9a-z]{16}")){
 					pid = "null";
 				}
+				
 				ver = (String) map.get(ver1_label);
 				if (ver == null) {
 					ver = (String) map.get(ver2_label);
@@ -157,122 +171,130 @@ public class guid_statis_request implements WritableComparable<guid_statis_reque
 						ver = "N/A";
 					}
 				}
+				if(ver!=null && ver.contains("%")){
+					try{
+						ver = URLDecoder.decode(ver, "UTF-8");
+					}catch(UnsupportedEncodingException une){}
+				}
 				ver = ver.replaceAll("[^0-9.]", "");
 				ver = ver.equals("") ? "N/A" : ver;
 				
 				imei = (String) map.get(imei_label);
 				if (imei == null) {
-					imei = "null";
+					imei = "";
 				}else{
 					imei = imei.replaceAll("[\r\n\"]", "");
-					imei = imei.equals("") ? "null" : imei;
 				}
 				imsi = (String) map.get(imsi_label);
 				if (imsi == null) {
-					imsi = "null";
+					imsi = "";
 				}else{
 					imsi = imsi.replaceAll("[\r\n\"]", "");
-					imsi = imsi.equals("") ? "null" : imsi;
 				}
 				deviceid = (String) map.get(deviceid_label);
 				if (deviceid == null) {
-					deviceid = "null";
+					deviceid = "";
 				}else{
 					deviceid = deviceid.replaceAll("[\r\n\"]", "");
-					deviceid = deviceid.equals("") ? "null" : deviceid;
 				}
 				ndeviceid = (String) map.get(ndeviceid_label);
 				if (ndeviceid == null) {
-					ndeviceid = "null";
+					ndeviceid = "";
 				}else{
 					ndeviceid = ndeviceid.replaceAll("[\r\n\"]", "");
-					ndeviceid = ndeviceid.equals("") ? "null" : ndeviceid;
 				}
 				mac = (String) map.get(mac_label);
 				if (mac == null) {
-					mac = "null";
+					mac = "";
 				}else{
 					mac = mac.replaceAll("[\r\n\"]", "");
-					mac = mac.equals("") ? "null" : mac;
 				}
 				uuid = (String) map.get(uuid_label);
 				if (uuid == null) {
-					uuid = "null";
+					uuid = "";
 				}else{
 					uuid = uuid.replaceAll("[\r\n\"]", "");
-					uuid = uuid.equals("") ? "null" : uuid;
 				}
 				operator = (String) map.get(operator_label);
 				if (operator == null) {
-					operator = "null";
+					operator = "";
 				} else {
 					operator = URLDecoder.decode(operator, "UTF-8");
 					operator = operator.replaceAll("[\r\n\"]", "");
-					operator = operator.equals("") ? "null" : operator;
 				}
 				network = (String) map.get(network_label);
 				if (network == null) {
-					network = "null";
+					network = "";
 				}else{
 					network = network.replaceAll("[\r\n\"]", "");
-					network = network.equals("") ? "null" : network;
 				}
 				brand = (String) map.get(brand_label);
 				if (brand == null) {
-					brand = "null";
+					brand = "";
 				}else{
 					brand = brand.replaceAll("[\r\n\"]", "");
-					brand = brand.equals("") ? "null" : brand;
 				}
 				btype = (String) map.get(btype_label);
 				if (btype == null) {
-					btype = "null";
+					btype = "";
 				} else {
 					btype = URLDecoder.decode(btype, "UTF-8");
 					btype = btype.replaceAll("[\r\n\"]", "");
-					btype = btype.equals("") ? "null" : btype;
 				}
 				os = (String) map.get(os_label);
 				if (os == null) {
-					os = "null";
+					os = "";
 				}else{
 					os = os.replaceAll("[\r\n\"]", "");
-					os = os.equals("") ? "null" : os;
 				}
 				os_ver = (String) map.get(os_ver_label);
 				if (os_ver == null) {
 					os_ver = "N/A";
-				}else{
-					os_ver = os_ver.replaceAll("[\r\n\"]", "");
+				}
+				if(os_ver!=null && os_ver.contains("%")){
+					try{
+						ver = URLDecoder.decode(ver, "UTF-8");
+					}catch(UnsupportedEncodingException une){}
 				}
 				os_ver = os_ver.replaceAll("[^0-9.]", "");
 				os_ver = os_ver.equals("") ? "N/A" : os_ver;
 				
 				wt = (String) map.get(wt_label);
 				if (wt == null) {
-					wt = "null";
+					wt = "";
 				}else{
 					wt = wt.replaceAll("[\r\n\"]", "");
-					wt = wt.equals("") ? "null" : wt;
 				}
 				ht = (String) map.get(ht_label);
 				if (ht == null) {
-					ht = "null";
+					ht = "";
 				}else{
 					ht = ht.replaceAll("[\r\n\"]", "");
-					ht = ht.equals("") ? "null" : ht;
 				}
 				
-				guid = getGuid(mac, imei, deviceid, uuid);
 				if(ndeviceid!=null && !ndeviceid.equals("")){
 					guid2 = getGuid(mac, imei, ndeviceid, uuid);
 				}
-				if(guid == null){
-					guid = "null";
-				}
+				
 				if(guid2 == null){
-					guid2 = "null";
+					guid2 = "";
 				}
+				
+				String guid_user = (String) map.get(guid_label);
+				if(guid_user!=null && guid_user.matches("[0-9a-z]{32}")){
+					guid = guid_user;
+				}else{
+					if (deviceid.isEmpty() && !ndeviceid.isEmpty()){
+						guid = guid2;
+					}else{
+						guid = getGuid(mac, imei, deviceid, uuid);
+					}
+				}
+
+				if(guid == null){
+					guid = "";
+				}
+				
 			} else {
 			}
 		} catch (Exception e) {

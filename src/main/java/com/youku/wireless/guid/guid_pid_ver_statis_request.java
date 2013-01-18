@@ -148,7 +148,7 @@ public class guid_pid_ver_statis_request implements WritableComparable<guid_pid_
 				}
 				pid = (String) map.get(pid_label);
 				if (pid == null) {
-					pid = "null";
+					pid = "";
 				}
 				ver = (String) map.get(ver1_label);
 				if (ver == null) {
@@ -162,82 +162,71 @@ public class guid_pid_ver_statis_request implements WritableComparable<guid_pid_
 				
 				imei = (String) map.get(imei_label);
 				if (imei == null) {
-					imei = "null";
+					imei = "";
 				}else{
 					imei = imei.replaceAll("[\r\n\"]", "");
-					imei = imei.equals("") ? "null" : imei;
 				}
 				imsi = (String) map.get(imsi_label);
 				if (imsi == null) {
-					imsi = "null";
+					imsi = "";
 				}else{
 					imsi = imsi.replaceAll("[\r\n\"]", "");
-					imsi = imsi.equals("") ? "null" : imsi;
 				}
 				deviceid = (String) map.get(deviceid_label);
 				if (deviceid == null) {
-					deviceid = "null";
+					deviceid = "";
 				}else{
 					deviceid = deviceid.replaceAll("[\r\n\"]", "");
-					deviceid = deviceid.equals("") ? "null" : deviceid;
 				}
 				ndeviceid = (String) map.get(ndeviceid_label);
 				if (ndeviceid == null) {
-					ndeviceid = "null";
+					ndeviceid = "";
 				}else{
 					ndeviceid = ndeviceid.replaceAll("[\r\n\"]", "");
-					ndeviceid = ndeviceid.equals("") ? "null" : ndeviceid;
 				}
 				mac = (String) map.get(mac_label);
 				if (mac == null) {
-					mac = "null";
+					mac = "";
 				}else{
 					mac = mac.replaceAll("[\r\n\"]", "");
-					mac = mac.equals("") ? "null" : mac;
 				}
 				uuid = (String) map.get(uuid_label);
 				if (uuid == null) {
-					uuid = "null";
+					uuid = "";
 				}else{
 					uuid = uuid.replaceAll("[\r\n\"]", "");
-					uuid = uuid.equals("") ? "null" : uuid;
 				}
 				operator = (String) map.get(operator_label);
 				if (operator == null) {
-					operator = "null";
+					operator = "";
 				} else {
 					operator = URLDecoder.decode(operator, "UTF-8");
 					operator = operator.replaceAll("[\r\n\"]", "");
-					operator = operator.equals("") ? "null" : operator;
 				}
 				network = (String) map.get(network_label);
 				if (network == null) {
-					network = "null";
+					network = "";
 				}else{
 					network = network.replaceAll("[\r\n\"]", "");
-					network = network.equals("") ? "null" : network;
 				}
 				brand = (String) map.get(brand_label);
 				if (brand == null) {
-					brand = "null";
+					brand = "";
 				}else{
 					brand = brand.replaceAll("[\r\n\"]", "");
-					brand = brand.equals("") ? "null" : brand;
 				}
 				btype = (String) map.get(btype_label);
 				if (btype == null) {
-					btype = "null";
+					btype = "";
 				} else {
 					btype = URLDecoder.decode(btype, "UTF-8");
 					btype = btype.replaceAll("[\r\n\"]", "");
-					btype = btype.equals("") ? "null" : btype;
 				}
 				os = (String) map.get(os_label);
 				if (os == null) {
-					os = "null";
+					os = "";
 				}else{
 					os = os.replaceAll("[\r\n\"]", "");
-					os = os.equals("") ? "null" : os;
 				}
 				os_ver = (String) map.get(os_ver_label);
 				if (os_ver == null) {
@@ -250,17 +239,15 @@ public class guid_pid_ver_statis_request implements WritableComparable<guid_pid_
 				
 				wt = (String) map.get(wt_label);
 				if (wt == null) {
-					wt = "null";
+					wt = "";
 				}else{
 					wt = wt.replaceAll("[\r\n\"]", "");
-					wt = wt.equals("") ? "null" : wt;
 				}
 				ht = (String) map.get(ht_label);
 				if (ht == null) {
-					ht = "null";
+					ht = "";
 				}else{
 					ht = ht.replaceAll("[\r\n\"]", "");
-					ht = ht.equals("") ? "null" : ht;
 				}
 				
 				guid = getGuid(mac, imei, deviceid, uuid);
@@ -268,10 +255,10 @@ public class guid_pid_ver_statis_request implements WritableComparable<guid_pid_
 					guid2 = getGuid(mac, imei, ndeviceid, uuid);
 				}
 				if(guid == null){
-					guid = "null";
+					guid = "";
 				}
 				if(guid2 == null){
-					guid2 = "null";
+					guid2 = "";
 				}
 			} else {
 			}
